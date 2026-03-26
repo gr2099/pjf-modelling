@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 213 31% 91%;
+    --card: 222 47% 9%;
+    --card-foreground: 213 31% 91%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 210 100% 60%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 222 30% 16%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 213 31% 91%;
+    --border: 222 30% 16%;
+    --input: 222 30% 16%;
+    --ring: 210 100% 60%;
+    --radius: 0.75rem;
+    --chart-1: 210 100% 60%;
+    --chart-2: 160 84% 50%;
+    --chart-3: 38 92% 60%;
+    --chart-4: 280 76% 65%;
+    --chart-5: 0 63% 55%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-background; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+  }
+  .number {
+    @apply font-mono tabular-nums;
+  }
+  .positive { @apply text-emerald-400; }
+  .negative { @apply text-red-400; }
+  .neutral  { @apply text-sky-400; }
+}

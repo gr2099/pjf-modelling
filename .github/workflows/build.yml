@@ -1,0 +1,109 @@
+name: Build Executables
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            name: mac
+            artifact: pjf-modelling-mac
+          - os: ubuntu-latest
+            name: linux
+            artifact: pjf-modelling-linux
+          - os: windows-latest
+            name: windows
+            artifact: pjf-modelling-windows
+
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.name }})
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Python dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build executable (Unix)
+        if: matrix.name != 'windows'
+        working-directory: backend
+        run: pyinstaller pjf_modelling.spec --noconfirm
+
+      - name: Build executable (Windows)
+        if: matrix.name == 'windows'
+        working-directory: backend
+        run: pyinstaller pjf_modelling.spec --noconfirm
+
+      - name: Package artifact (Unix)
+        if: matrix.name != 'windows'
+        run: |
+          cd backend/dist
+          tar -czf ${{ matrix.artifact }}.tar.gz pjf-modelling/
+
+      - name: Package artifact (Windows)
+        if: matrix.name == 'windows'
+        shell: pwsh
+        run: |
+          cd backend/dist
+          Compress-Archive -Path pjf-modelling -DestinationPath ${{ matrix.artifact }}.zip
+
+      - name: Upload artifact (Unix)
+        if: matrix.name != 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: backend/dist/${{ matrix.artifact }}.tar.gz
+
+      - name: Upload artifact (Windows)
+        if: matrix.name == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: backend/dist/${{ matrix.artifact }}.zip
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
