@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend,
   Area,
-  AreaChart,
   BarChart,
   Cell,
 } from "recharts";
@@ -73,13 +72,12 @@ export function FinancialChart({
   pct = false,
   stacked = false,
 }: FinancialChartProps) {
-  const hasBars = series.some((s) => s.type !== "line");
-  const hasLines = series.some((s) => s.type === "line");
-  const ChartComponent = hasBars && hasLines ? ComposedChart : hasBars ? BarChart : AreaChart;
-
+  // Always use ComposedChart — it correctly handles Bar, Line, and Area children.
+  // Selecting BarChart/AreaChart for single-type series causes recharts to crash
+  // when it receives child elements it doesn't expect (e.g. Area inside BarChart).
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <ChartComponent data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+      <ComposedChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(222,30%,16%)" vertical={false} />
         <XAxis
           dataKey={xKey}
@@ -114,7 +112,6 @@ export function FinancialChart({
                 stroke={color}
                 strokeWidth={2}
                 dot={false}
-                yAxisId={s.yAxisId ?? "left"}
               />
             );
           }
@@ -145,7 +142,7 @@ export function FinancialChart({
             />
           );
         })}
-      </ChartComponent>
+      </ComposedChart>
     </ResponsiveContainer>
   );
 }

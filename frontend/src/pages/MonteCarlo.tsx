@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { runMonteCarlo } from "@/lib/api";
+import { runMonteCarlo, exportMonteCarloXlsx } from "@/lib/api";
 import { fmt } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Histogram, FinancialChart } from "@/components/charts/FinancialChart";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, Loader2 } from "lucide-react";
+import { BarChart3, Loader2, Download } from "lucide-react";
 
 const DEFAULT = {
   base_revenue: 100_000_000,
@@ -60,10 +60,18 @@ export default function MonteCarlo() {
               Mean-reverting Ornstein-Uhlenbeck process with Cholesky-correlated variables
             </p>
           </div>
-          <Button onClick={() => mut.mutate(form)} disabled={mut.isPending}>
-            {mut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
-            {mut.isPending ? "Running…" : `Run ${form.n_simulations.toLocaleString()} Simulations`}
-          </Button>
+          <div className="flex gap-2">
+            {result && (
+              <Button variant="outline" onClick={() => exportMonteCarloXlsx(form)}>
+                <Download className="h-4 w-4" />
+                Export Excel
+              </Button>
+            )}
+            <Button onClick={() => mut.mutate(form)} disabled={mut.isPending}>
+              {mut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
+              {mut.isPending ? "Running…" : `Run ${form.n_simulations.toLocaleString()} Simulations`}
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           <Input label="Base Revenue ($)" type="number" value={form.base_revenue}

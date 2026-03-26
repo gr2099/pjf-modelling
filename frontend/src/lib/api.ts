@@ -51,3 +51,26 @@ export async function runWACC(payload: unknown) {
   const { data } = await http.post("/valuation/wacc", payload);
   return data;
 }
+
+// ── Excel Export ────────────────────────────────────────────────────────────
+
+async function downloadBlob(url: string, payload: unknown, filename: string) {
+  const { data } = await http.post(url, payload, { responseType: "blob" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([data]));
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+export const exportCorporateXlsx = (payload: unknown) =>
+  downloadBlob("/export/corporate", payload, "corporate_model.xlsx");
+
+export const exportProjectXlsx = (payload: unknown) =>
+  downloadBlob("/export/project", payload, "project_finance.xlsx");
+
+export const exportAcquisitionXlsx = (payload: unknown) =>
+  downloadBlob("/export/acquisition", payload, "acquisition_model.xlsx");
+
+export const exportMonteCarloXlsx = (payload: unknown) =>
+  downloadBlob("/export/monte-carlo", payload, "monte_carlo.xlsx");

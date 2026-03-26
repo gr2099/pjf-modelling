@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { runProjectModel } from "@/lib/api";
+import { runProjectModel, exportProjectXlsx } from "@/lib/api";
 import { fmt } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { FinancialChart } from "@/components/charts/FinancialChart";
 import { DataTable } from "@/components/charts/DataTable";
 import { Badge } from "@/components/ui/badge";
-import { Play, Loader2 } from "lucide-react";
+import { Play, Loader2, Download } from "lucide-react";
 
 const DEFAULT = {
   name: "Wind Farm 200MW",
@@ -62,10 +62,18 @@ export default function ProjectFinance() {
       <div className="glass rounded-xl p-5 border border-border/50">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Project Assumptions</h2>
-          <Button onClick={() => mut.mutate(form)} disabled={mut.isPending}>
-            {mut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-            Run Model
-          </Button>
+          <div className="flex gap-2">
+            {result && (
+              <Button variant="outline" onClick={() => exportProjectXlsx(form)}>
+                <Download className="h-4 w-4" />
+                Export Excel
+              </Button>
+            )}
+            <Button onClick={() => mut.mutate(form)} disabled={mut.isPending}>
+              {mut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Run Model
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           <Input label="Construction Cost ($)" type="number" value={form.costs.construction_cost}
