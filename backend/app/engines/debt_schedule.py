@@ -3,8 +3,20 @@ Debt scheduling and cash flow waterfall engine.
 Supports: straight-line amortization, interest-only periods, DSRA.
 """
 from __future__ import annotations
+import math
 import numpy as np
 from app.models.schemas import DebtAssumptions, ProjectDebtAssumptions
+
+
+def _safe_dscr(fcf: float, debt_service: float) -> float | None:
+    """Return DSCR, or None when debt service is zero/negligible (debt paid off).
+    Values above 20x are capped to None — they only occur when rounding leaves
+    a sub-dollar balance and the ratio becomes meaninglessly large.
+    """
+    if debt_service < 1.0:   # effectively zero (debt repaid or rounding artifact)
+        return None
+    ratio = fcf / debt_service
+    return None if ratio > 20.0 else round(float(ratio), 4)
 
 
 def build_debt_schedule(
@@ -18,24 +30,23 @@ def build_debt_schedule(
     interest = np.zeros(n)
     principal = np.zeros(n)
     new_debt = np.zeros(n)
-    dscr = np.zeros(n)
 
     new_draws = debt.new_debt_schedule[:n] + [0.0] * max(0, n - len(debt.new_debt_schedule))
-
     annual_principal = debt.initial_debt / max(debt.amortization_years, 1)
+
+    dscr: list[float | None] = []
 
     for i in range(n):
         opening[i] = closing[i - 1] if i > 0 else debt.initial_debt
         new_debt[i] = new_draws[i]
         interest[i] = opening[i] * debt.interest_rate
-        scheduled_principal = min(annual_principal, opening[i] + new_debt[i])
-        # Waterfall: cap principal at available FCF after interest
+        scheduled_principal = min(annual_principal, max(opening[i] + new_debt[i], 0.0))
         available = max(fcf[i], 0.0)
         debt_service = interest[i] + scheduled_principal
         actual_ds = min(debt_service, available)
         principal[i] = max(actual_ds - interest[i], 0.0)
         closing[i] = opening[i] + new_debt[i] - principal[i]
-        dscr[i] = fcf[i] / debt_service if debt_service > 0 else float("inf")
+        dscr.append(_safe_dscr(fcf[i], debt_service))
 
     equity_fcf = [fcf[i] - interest[i] - principal[i] for i in range(n)]
 
@@ -46,7 +57,7 @@ def build_debt_schedule(
         "principal": principal.tolist(),
         "closing_balance": closing.tolist(),
         "equity_fcf": equity_fcf,
-        "dscr": dscr.tolist(),
+        "dscr": dscr,
     }
 
 
@@ -67,11 +78,9 @@ def build_project_debt_schedule(
     closing = np.zeros(n)
     interest = np.zeros(n)
     principal = np.zeros(n)
-    dscr = np.zeros(n)
     dsra_balance = np.zeros(n)
 
-    # DSRA target = 6 months of debt service
-    dsra_months = debt.debt_service_reserve_months
+    dscr: list[float | None] = []
 
     for i in range(n):
         opening[i] = closing[i - 1] if i > 0 else total_debt
@@ -79,18 +88,21 @@ def build_project_debt_schedule(
         if i < debt.grace_period_years:
             principal[i] = 0.0
         else:
-            principal[i] = min(annual_principal, opening[i])
+            principal[i] = min(annual_principal, max(opening[i], 0.0))
 
         ds = interest[i] + principal[i]
-        # Update DSRA target
-        dsra_target = ds * dsra_months / 12.0
-        dsra_balance[i] = dsra_target
-
-        dscr[i] = operating_fcf[i] / ds if ds > 0 else float("inf")
+        dsra_balance[i] = ds * debt.debt_service_reserve_months / 12.0
+        dscr.append(_safe_dscr(operating_fcf[i], ds))
         closing[i] = opening[i] - principal[i]
 
     equity_distributions = [
         max(operating_fcf[i] - interest[i] - principal[i], 0.0) for i in range(n)
+    ]
+
+    # Exclude None and grace-period years from min/avg DSCR
+    finite_dscr = [
+        v for v in dscr[debt.grace_period_years:]
+        if v is not None and math.isfinite(v)
     ]
 
     return {
@@ -99,9 +111,9 @@ def build_project_debt_schedule(
         "interest": interest.tolist(),
         "principal": principal.tolist(),
         "closing_balance": closing.tolist(),
-        "dscr": dscr.tolist(),
+        "dscr": dscr,
         "dsra_balance": dsra_balance.tolist(),
         "equity_distributions": equity_distributions,
-        "min_dscr": float(np.min(dscr[debt.grace_period_years:])) if n > debt.grace_period_years else 0.0,
-        "avg_dscr": float(np.mean(dscr[debt.grace_period_years:])) if n > debt.grace_period_years else 0.0,
+        "min_dscr": float(min(finite_dscr)) if finite_dscr else None,
+        "avg_dscr": float(sum(finite_dscr) / len(finite_dscr)) if finite_dscr else None,
     }
