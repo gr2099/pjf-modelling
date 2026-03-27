@@ -169,7 +169,7 @@ def build_merger_model(inp: MergerInput) -> dict:
         "credit_metrics": {
             "combined_net_debt": combined_net_debt,
             "debt_to_ebitda": debt_to_ebitda.tolist(),
-            "interest_coverage": [interest_coverage] * n,
+            "interest_coverage": (combined_ebitda / max(annual_interest, 1e-9)).tolist(),
         },
 
         # Key metrics

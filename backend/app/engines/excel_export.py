@@ -189,7 +189,7 @@ def export_corporate(result: dict, inp: dict | None = None) -> bytes:
     cols = range(2, n + 2)
 
     is_ = result["income_statement"]
-    cf  = result["cash_flow"]
+    cf  = result["cash_flow_statement"]
     tax = result["tax"]
     ds  = result["debt_schedule"]
     val = result["valuation"]
@@ -674,7 +674,7 @@ def export_acquisition(result: dict, inp: dict | None = None) -> bytes:
         ("─── Key Outputs ─────────", "", "@"),
         ("Entry EBITDA",          entry["entry_ebitda"],            FMT_USD),
         ("Equity Invested",       entry["equity_invested"],          FMT_USD),
-        ("Entry Debt",            entry["debt"],                     FMT_USD),
+        ("Entry Debt",            entry["total_debt"],               FMT_USD),
         ("Exit EV",               exit_["exit_ev"],                  FMT_USD),
         ("Exit Equity Proceeds",  exit_["exit_equity_proceeds"],     FMT_USD),
         ("Equity IRR",            ret.get("equity_irr") or 0,       FMT_PCT),
@@ -744,7 +744,7 @@ def export_acquisition(result: dict, inp: dict | None = None) -> bytes:
         ("Entry EBITDA",          entry["entry_ebitda"],          FMT_USD),
         ("Entry Multiple",        entry["entry_multiple"],        FMT_RATIO),
         ("Equity Invested",       entry["equity_invested"],       FMT_USD),
-        ("Entry Debt",            entry["debt"],                  FMT_USD),
+        ("Entry Debt",            entry["total_debt"],            FMT_USD),
         ("Exit EBITDA",           exit_["exit_ebitda"],           FMT_USD),
         ("Exit EV",               exit_["exit_ev"],               FMT_USD),
         ("Exit Multiple",         exit_["exit_multiple"],         FMT_RATIO),

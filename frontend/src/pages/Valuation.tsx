@@ -382,7 +382,7 @@ export default function Valuation() {
                   { label: "After-Tax Cost of Debt", value: fmtPct(capmResult.after_tax_cost_of_debt) },
                   { label: "Equity Weight", value: fmtPct(capmResult.equity_weight) },
                   { label: "Debt Weight", value: fmtPct(capmResult.debt_weight) },
-                  { label: "Levered Beta Used", value: capmResult.capm_components?.beta_levered?.toFixed(3) ?? "—" },
+                  { label: "Levered Beta Used", value: capmResult.beta_levered?.toFixed(3) ?? "—" },
                 ].map((k) => (
                   <Card key={k.label} className={k.highlight ? "border border-primary" : ""}>
                     <p className="text-xs text-muted-foreground">{k.label}</p>
@@ -398,10 +398,10 @@ export default function Valuation() {
                     <tbody className="divide-y">
                       {[
                         { label: "Risk-Free Rate", value: fmtPct(capmResult.cost_of_equity_breakdown.risk_free_rate) },
-                        { label: `Beta (${capmResult.capm_components?.beta_levered?.toFixed(2)}) × ERP`, value: fmtPct((capmResult.capm_components?.beta_levered ?? 0) * (capmResult.cost_of_equity_breakdown.equity_risk_premium ?? 0)) },
+                        { label: `Beta (${capmResult.beta_levered?.toFixed(2)}) × ERP`, value: fmtPct(capmResult.cost_of_equity_breakdown.market_premium ?? 0) },
                         { label: "Size Premium", value: fmtPct(capmResult.cost_of_equity_breakdown.size_premium ?? 0) },
-                        { label: "Country Risk Premium", value: fmtPct(capmResult.cost_of_equity_breakdown.country_risk_premium ?? 0) },
-                        { label: "Company-Specific Premium", value: fmtPct(capmResult.cost_of_equity_breakdown.company_specific_premium ?? 0) },
+                        { label: "Country Risk Premium", value: fmtPct(capmResult.cost_of_equity_breakdown.country_premium ?? 0) },
+                        { label: "Company-Specific Premium", value: fmtPct(capmResult.capm_components?.company_specific ?? 0) },
                         { label: "Cost of Equity", value: fmtPct(capmResult.cost_of_equity), bold: true },
                       ].map((row) => (
                         <tr key={row.label}>
