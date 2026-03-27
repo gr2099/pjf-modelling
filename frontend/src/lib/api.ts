@@ -54,6 +54,11 @@ export async function runBreakEven(payload: unknown) {
   return data;
 }
 
+export async function runWaterfall(payload: unknown) {
+  const { data } = await http.post("/risk/waterfall", payload);
+  return data;
+}
+
 // ── Valuation ──────────────────────────────────────────────────────────────
 
 export async function runDCF(payload: unknown) {
