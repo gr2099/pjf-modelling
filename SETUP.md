@@ -11,8 +11,7 @@ brew install node
 # Download from https://nodejs.org (LTS version)
 ```
 
-### 2. Python 3.9+ (already installed)
-Verified working with your `/Library/Frameworks/Python.framework/Versions/3.9/bin/python3`.
+### 2. Python 3.9+
 
 ---
 
@@ -76,14 +75,16 @@ npm run dev
 
 ## Models Implemented
 
-| Model              | Key Outputs                                |
-|--------------------|--------------------------------------------|
-| Corporate          | FCF, EBITDA, NPV, Equity IRR, DSCR         |
-| Project Finance    | DSCR, Equity IRR, Project IRR, DSRA        |
-| Acquisition / LBO  | MOIC, Equity IRR, exit proceeds            |
-| DCF Valuation      | Enterprise value, equity value, TV %       |
-| Risk Analysis      | Tornado, break-even, waterfall, scenarios  |
-| Monte Carlo        | P5/P50/P95, histogram, sample paths        |
+| Model              | Key Outputs                                           |
+|--------------------|-------------------------------------------------------|
+| Corporate          | FCF, EBITDA, NPV, Equity IRR, DSCR, ROIC             |
+| Project Finance    | DSCR, LLCR, PLCR, Equity IRR, Project IRR, DSRA      |
+| Acquisition / LBO  | MOIC, Equity IRR, exit waterfall, preferred equity    |
+| Merger / M&A       | EPS accretion/dilution, synergies, combined P&L       |
+| Real Estate        | NOI, DSCR, equity IRR, equity multiple, exit analysis |
+| DCF Valuation      | 4 TV methods, CAPM WACC, football field, comps        |
+| Risk Analysis      | Tornado, break-even, waterfall, scenarios             |
+| Monte Carlo        | P5/P50/P95, histogram, sample paths                   |
 
 ---
 

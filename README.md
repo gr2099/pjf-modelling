@@ -21,11 +21,13 @@ No spreadsheet required. No cloud dependency. Runs locally on Windows, macOS, an
 
 | Module | Description |
 |---|---|
-| **Corporate Model** | Revenue build, EBITDA, FCF, tax schedule, NPV, equity IRR, DSCR |
-| **Project Finance** | Construction/operations split, DSCR, DSRA, project & equity IRR |
-| **Acquisition / LBO** | Entry multiples, debt tranches, MOIC, equity IRR, exit waterfall |
-| **DCF Valuation** | WACC, terminal value (Gordon Growth / exit multiple), bridge to equity |
-| **Risk Analysis** | Tornado chart, break-even, scenario manager, waterfall |
+| **Corporate Model** | Revenue build, EBITDA, FCF, tax schedule, NPV, equity IRR, DSCR, ROIC |
+| **Project Finance** | Construction/operations split, DSCR, LLCR, PLCR, DSRA, MRA, project & equity IRR |
+| **Acquisition / LBO** | Entry multiples, debt tranches, MOIC, equity IRR, exit waterfall, preferred equity, carry |
+| **Merger / M&A** | Sources & uses, EPS accretion/dilution, synergy ramp, combined P&L, credit metrics |
+| **Real Estate** | NOI waterfall, occupancy ramp, DSCR, exit cap rate, equity IRR, equity multiple |
+| **DCF Valuation** | 4 TV methods (Gordon Growth, exit multiple, ROIC value driver, H-model) · CAPM WACC build-up · football field · comparable companies |
+| **Risk Analysis** | Tornado chart, break-even, scenario manager, cash flow waterfall |
 | **Monte Carlo** | 1 000-run simulation, P5/P50/P95 bands, histogram, sample paths |
 | **Excel Export** | Any result set exported to a formatted `.xlsx` in one click |
 
@@ -36,7 +38,7 @@ No spreadsheet required. No cloud dependency. Runs locally on Windows, macOS, an
 | Layer | Technology |
 |---|---|
 | Backend | Python 3.9+ · FastAPI · uvicorn · NumPy · SciPy · pandas · openpyxl |
-| Frontend | React 18 · TypeScript · Vite · Tailwind CSS · Recharts · Zustand |
+| Frontend | React 18 · TypeScript · Vite · Tailwind CSS · Recharts · TanStack Query |
 | Packaging | PyInstaller — single self-contained executable, no install needed |
 
 ---
