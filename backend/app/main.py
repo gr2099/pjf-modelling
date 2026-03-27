@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from app.routers import corporate, project_finance, acquisition, risk_analysis, valuation, export
+from app.routers import corporate, project_finance, acquisition, risk_analysis, valuation, export, merger, real_estate
 
 app = FastAPI(
     title="PJF Modelling",
@@ -27,6 +27,8 @@ app.include_router(acquisition.router,     prefix="/api/acquisition", tags=["Acq
 app.include_router(risk_analysis.router,   prefix="/api/risk",        tags=["Risk Analysis"])
 app.include_router(valuation.router,       prefix="/api/valuation",   tags=["Valuation"])
 app.include_router(export.router,          prefix="/api/export",      tags=["Export"])
+app.include_router(merger.router,          prefix="/api/merger",      tags=["Merger / M&A"])
+app.include_router(real_estate.router,     prefix="/api/real-estate", tags=["Real Estate"])
 
 
 @app.get("/api/health")

@@ -8,6 +8,8 @@ import Acquisition from "@/pages/Acquisition";
 import Valuation from "@/pages/Valuation";
 import RiskAnalysis from "@/pages/RiskAnalysis";
 import MonteCarlo from "@/pages/MonteCarlo";
+import Merger from "@/pages/Merger";
+import RealEstate from "@/pages/RealEstate";
 
 export default function App() {
   return (
@@ -22,6 +24,8 @@ export default function App() {
               <Route path="/corporate" element={<CorporateModel />} />
               <Route path="/project" element={<ProjectFinance />} />
               <Route path="/acquisition" element={<Acquisition />} />
+              <Route path="/merger" element={<Merger />} />
+              <Route path="/real-estate" element={<RealEstate />} />
               <Route path="/valuation" element={<Valuation />} />
               <Route path="/risk" element={<RiskAnalysis />} />
               <Route path="/monte-carlo" element={<MonteCarlo />} />

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const http = axios.create({ baseURL: "/api", timeout: 30_000 });
+export const http = axios.create({ baseURL: "/api", timeout: 60_000 });
 
 // ── Corporate ──────────────────────────────────────────────────────────────
 
@@ -20,6 +20,20 @@ export async function runProjectModel(payload: unknown) {
 
 export async function runAcquisitionModel(payload: unknown) {
   const { data } = await http.post("/acquisition/run", payload);
+  return data;
+}
+
+// ── Merger ─────────────────────────────────────────────────────────────────
+
+export async function runMergerModel(payload: unknown) {
+  const { data } = await http.post("/merger/run", payload);
+  return data;
+}
+
+// ── Real Estate ────────────────────────────────────────────────────────────
+
+export async function runRealEstateModel(payload: unknown) {
+  const { data } = await http.post("/real-estate/run", payload);
   return data;
 }
 
@@ -49,6 +63,16 @@ export async function runDCF(payload: unknown) {
 
 export async function runWACC(payload: unknown) {
   const { data } = await http.post("/valuation/wacc", payload);
+  return data;
+}
+
+export async function runWACCCAPM(payload: unknown) {
+  const { data } = await http.post("/valuation/wacc-capm", payload);
+  return data;
+}
+
+export async function runComprehensiveValuation(payload: unknown) {
+  const { data } = await http.post("/valuation/comprehensive", payload);
   return data;
 }
 

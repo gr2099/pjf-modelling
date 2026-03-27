@@ -32,6 +32,10 @@ export function fmt(value: number | null | undefined, opts?: {
   return value.toFixed(decimals ?? 2);
 }
 
+export function fmtPct(value: number | null | undefined, decimals = 1): string {
+  return fmt(value, { style: "percent", decimals });
+}
+
 export function pctChange(a: number, b: number): number {
   return b === 0 ? 0 : (a - b) / Math.abs(b);
 }
